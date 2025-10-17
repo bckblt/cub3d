@@ -11,9 +11,9 @@ int main(int ac, char **av)
     }
     info = parse(av[1]);
     if(!info)
-        return(0);
+        exit(1);
     game = malloc(sizeof(t_game));
     ft_memset(game, 0, sizeof(t_game));
     game_engine(game, info);
-    return(0);
+    exit(0);
 }

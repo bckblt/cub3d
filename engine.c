@@ -47,7 +47,6 @@ void game_engine(t_game *game, t_map_chk *info)
     info->max_x = 1920;
     info->max_y = 1080;
     game->win = mlx_new_window((game->init), info->max_x, info->max_y, "cube3d");
-    printf("x = %d y = %d \n", info->max_x, info->max_y);
     game->img =  mlx_new_image(game->init, info->max_x, info->max_y);
     game->addr = mlx_get_data_addr(game->img, &game->bits_per_pixel, &game->line_length, &game->endian);
 

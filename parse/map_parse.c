@@ -99,7 +99,7 @@ bool    map_parse(t_map_chk *info)
 	i = 1;
 	while(info->map[i])
 	{
-		j = ft_strlen(info->map[i]) - 2;
+		j = ft_strlen(info->map[i]) - 1;
 		if(info->map[i][0] != '1' || info->map[i][j] != '1')
 		{
 			printf("Walls is not correct\n");

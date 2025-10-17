@@ -132,7 +132,6 @@ bool	colour_format(t_map_chk *info)
 
 t_map_chk    *parse(char *file)
 {
-	int i = 0;
 	t_map_chk *info;
 	info = malloc(sizeof(t_map_chk));
 	if(!check_file_name(file))
@@ -163,16 +162,5 @@ t_map_chk    *parse(char *file)
 	}
 	if(!path_chk(info) || !colour_format(info) || !map_parse(info))
 		return NULL;
-	printf("%s", info->NT);
-	printf("%s", info->ET);
-	printf("%s", info->ST);
-	printf("%s", info->WT);
-	printf("%s", info->F);
-	printf("%s", info->C);
-	while(info->map[i])
-	{
-		printf("%s", info->map[i]);
-		i++;
-	}
 	return (info);
 }

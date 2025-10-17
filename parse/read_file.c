@@ -39,7 +39,7 @@ void 	get_map(t_map_chk *info)
 	len = 0;
 	while(info->full_file[i])
 	{
-		info->map[len] = info->full_file[i];
+		info->map[len] = ft_strtrim(info->full_file[i], "\n ");
 		i++;
 		len++;
 	}
