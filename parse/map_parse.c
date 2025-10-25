@@ -1,30 +1,66 @@
 #include "cub3d.h"
 
-bool	wall_check(char **map)
+static	void	put_marks(char **cp_map, int x, int y)
 {
-	int i = 0;
-	int j = 0;
-	while(map[0][i])
+	cp_map[y][x] = '*';
+	if (cp_map[y - 1][x] && cp_map[y - 1][x] != '1' && cp_map[y - 1][x] != '*')
+		put_marks(cp_map, x, y - 1);
+	if (cp_map[y + 1][x] && cp_map[y + 1][x] != '1' && cp_map[y + 1][x] != '*')
+		put_marks(cp_map, x, y + 1);
+	if (cp_map[y][x - 1] && cp_map[y][x - 1] != '1' && cp_map[y][x - 1] != '*')
+		put_marks(cp_map, x - 1, y);
+	if (cp_map[y][x + 1] && cp_map[y][x + 1] != '1' && cp_map[y][x + 1] != '*')
+		put_marks(cp_map, x + 1, y);
+}
+
+bool 	space_chk(int x, int y, char **cp_map)
+{
+	if(cp_map[x][y] == '*')
 	{
-		if(map[0][i] != '1' && map[0][i] != '\n')
-		{
-			printf("Walls is not correct\n");
+		if(cp_map[x + 1][y] != '1' && cp_map[x + 1][y] != '*')
 			return(false);
-		}
-		i++;
+		if(cp_map[x - 1][y] != '1' && cp_map[x - 1][y] != '*')
+			return(false);
+		if(cp_map[x][y + 1] != '1' && cp_map[x][y + 1] != '*')
+			return(false);
+		if(cp_map[x][y - 1] != '1' && cp_map[x][y - 1] != '*')
+			return(false);
 	}
-	i = 0;
-	while(map[i])
-		i++;
-	i -= 1;
-	while(map[i][j])
+	else
+		return(true);
+	return(true);
+}
+
+bool	wall_check(t_map_chk *info)
+{
+	int		x;
+	int		y;
+	char	**cp_map;
+
+	x = 0;
+	y = 0;
+	cp_map = map_copy(info->map);
+	put_marks(cp_map, info->p_x, info->p_y);
+	while (cp_map[x])
 	{
-		if(map[i][j] != '1' && map[i][j] != '\n' && map[i][j] != '\0')
+		y = 0;
+		while (cp_map[x][y])
 		{
-			printf("Walls is not correct\n");
-			return(false);
+			if(!space_chk(x, y, cp_map))
+			{
+				printf("Error : Invalid map\n");
+				return(false);
+			}
+			if (cp_map[x][y] != '1' && cp_map[x][y] != '*'
+				&& cp_map[x][y] != '\n' && cp_map[x][y] != '\0'
+				&& cp_map[x][y] != '0' && cp_map[x][y] != ' ')
+			{
+				printf("Error : Invalid map\n");
+				return(false);
+			}
+			y++;
 		}
-		j++;
+		x++;
 	}
 	return(true);
 }
@@ -62,6 +98,11 @@ bool	player_chk(t_map_chk *info)
 		printf("Multiple player start positions");
 		return(false);
 	}
+	else if(info->p_x == 0 || info->p_y == 0)
+	{
+		printf("Player on the edge\n");
+		return(false);
+	}
 	else
 		return(true);
 }
@@ -89,25 +130,16 @@ bool    map_parse(t_map_chk *info)
 		{
 			if(!is_valid_char(info->map[i][j]))
 			{
-				printf("İnvalid char in map\n");
+				printf("Invalid char in map\n");
 				return(false);
 			}
 			j++;
 		}
 		i++;
 	}
-	i = 1;
-	while(info->map[i])
-	{
-		j = ft_strlen(info->map[i]) - 1;
-		if(info->map[i][0] != '1' || info->map[i][j] != '1')
-		{
-			printf("Walls is not correct\n");
-			return(false);
-		}
-		i++;
-	}
-	if(!wall_check(info->map) || !player_chk(info) || !move_chk(info))
+	if(!player_chk(info))
+		return(false);
+	if(!wall_check(info) || !move_chk(info))
 		return(false);
 	return(true);
 }

@@ -90,7 +90,7 @@ void	free_dp(char **str)
 bool	is_valid_char(char a)
 {
 	if(a != '0' && a != '1' && a != 'N' && a != 'W' && a != 'S'
-		&& a != 'E' && a != '\n' && a != '\0')
+		&& a != 'E' && a != '\n' && a != '\0' && a != ' ')
 	{
 		return(false);
 	}

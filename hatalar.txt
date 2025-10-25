@@ -11,3 +11,6 @@
 
 2-) Subject map hala hatalı 
 3-) test_whitespace sıçıyor
+
+
+MAP SINIRLARI DIŞINDA SPACE OLABİLİR İÇİNDE OLAMAZ

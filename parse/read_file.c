@@ -19,15 +19,14 @@ t_map_chk	*get_file(char *file, t_map_chk *info)
 	return(info);
 }
 
-void 	get_map(t_map_chk *info)
+void 	get_map(t_map_chk *info, int i)
 {
-	int i = 0;
 	int temp;
 	int len = 0;
-	while(info->full_file[i] && !(info->full_file[i][0] == '1' || info->full_file[i][0] == '0'))
+	while(info->full_file[i] && (info->full_file[i][0] == '\n'))
 		i++;
 	temp = i;
-	info->map_start = i + 1;
+	info->map_start = i;
 	while(info->full_file[temp])
 	{
 		len++;
@@ -73,7 +72,9 @@ bool	find_elements(char *key, char *line, char a)
 bool	get_textures_and_map(t_map_chk *info)
 {
 	int i = 0;
+	int key = 0;
 	int arg_c = 0;
+	int j = 0;
 	while(info->full_file[i])
 	{
 		if(find_elements("NO", info->full_file[i], '\0'))
@@ -106,10 +107,15 @@ bool	get_textures_and_map(t_map_chk *info)
 			info->C = info->full_file[i];
 			arg_c++;
 		}
+		if(arg_c == 6 && key == 0)
+		{
+			key = 1;
+			j = i + 1;
+		}
 		i++;
 	}
 	if(arg_c != 6)
 		return(false);
-	get_map(info);
+	get_map(info, j);
 	return(true);
 }

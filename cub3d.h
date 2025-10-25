@@ -101,7 +101,7 @@ void game_engine(t_game *game, t_map_chk *info);
 bool check_file_name(char *file);
 bool	is_valid_file(char *file);
 t_map_chk	*get_file(char *file, t_map_chk *info);
-void 	get_map(t_map_chk *info);
+void 	get_map(t_map_chk *info, int i);
 bool	get_textures_and_map(t_map_chk *info);
 void	free_dp(char **str);
 bool	rgb_chk(char **colour);
