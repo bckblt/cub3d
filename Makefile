@@ -14,7 +14,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 # MinilibX ayarları
 MLX_DIR = ./minilibx-linux
 MLX = $(MLX_DIR)/libmlx.a
-MLX_FLAGS = -L$(MLX_DIR) -lmlx -framework OpenGL -framework AppKit
+MLX_FLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm
 
 
 all: $(NAME) 

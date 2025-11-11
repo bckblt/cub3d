@@ -1,7 +1,7 @@
 #include "cub3d.h"
 
 
-static void draw_textured_column(t_game *game, int x, int drawStart, int drawEnd, t_texture *tex, int texX, int side)
+static void draw_textured_column(t_game *game, int x, int drawStart, int drawEnd, t_texture *tex, int texX)
 {
     if (!tex || !tex->addr || tex->width <= 0 || tex->height <= 0)
         return;
@@ -31,9 +31,6 @@ static void draw_textured_column(t_game *game, int x, int drawStart, int drawEnd
 
         char *src = tex->addr + (texY * tex->line_length + texX * (tex->bpp / 8));
         unsigned int color = *(unsigned int*)src;
-
-        if (side == 1) // shade y-sides a bit darker
-            color = (color >> 1) & 0x7F7F7F;
 
         dst = game->addr + (y * game->line_length + x * (game->bits_per_pixel / 8));
         *(unsigned int*)dst = color;
@@ -160,7 +157,7 @@ void render_frame(t_game *game)
 {
     int x = 0;
     t_ray ray;
-    
+
     while (x < game->info->max_x)
     {
         // Her x kolonu için bir ışın gönder
@@ -202,8 +199,8 @@ void render_frame(t_game *game)
         if (texX >= tex->width) texX = tex->width - 1;
 
         // Dokusuz fonksiyon yerine dokulu cizim
-        draw_textured_column(game, x, drawStart, drawEnd, tex, texX, ray.side);
+        draw_textured_column(game, x, drawStart, drawEnd, tex, texX);
         x++;
     }
-    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+    mlx_put_image_to_window(game->init, game->win, game->img, 0, 0);
 }

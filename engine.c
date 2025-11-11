@@ -2,36 +2,44 @@
 
 int exit_game(void *param)
 {
-    exit(0);
     t_game *game = (t_game *)param;
-    
-    if (game->img)
-        mlx_destroy_image(game->mlx, game->img);
-    if (game->win)
-        mlx_destroy_window(game->mlx, game->win);
+    if (game)
+    {
+        if (game->img)
+            mlx_destroy_image(game->init, game->img);
+        if (game->win)
+            mlx_destroy_window(game->init, game->win);
+    }
+    exit(0);
 }
 
 int key_press(int key, void *param)
 {
     t_game *game = (t_game *)param;
-    
-    if (key == 53)  // ESC
+    if (key == 53 || key == 65307)
         exit_game(game);
-    else if (key == 13 || key == 126)  // W veya Yukarı ok
+    else if (key == 13 || key == 126 || key == 119 || key == 65362)
         move_forward(game);
-    else if (key == 1 || key == 125)  // S veya Aşağı ok
+    else if (key == 1 || key == 125 || key == 115 || key == 65364)
         move_backward(game);
-    else if (key == 0)  // A
+    else if (key == 0 || key == 97)  // A
         strafe_left(game);
-    else if (key == 2)  // D
+    else if (key == 2 || key == 100)  // D
         strafe_right(game);
-    else if (key == 123)  // Sol ok
+    else if (key == 123 || key == 65361)  // Left arrow
         rotate_left(game);
-    else if (key == 124)  // Sağ ok
+    else if (key == 124 || key == 65363)  // Right arrow
         rotate_right(game);
 
     
     render_frame(game);
+    return (0);
+}
+
+int key_release(int keycode, t_game *game)
+{
+    (void)keycode;
+    (void)game;
     return (0);
 }
 
@@ -62,6 +70,7 @@ void game_engine(t_game *game, t_map_chk *info)
     render_frame(game);
 
     mlx_hook(game->win, 17, 0, exit_game, game);
-    mlx_hook(game->win, 2, 1, key_press, game);
+    mlx_hook(game->win, 2, 1L << 0, key_press, game);
+    mlx_hook(game->win, 3, 1L << 1, key_release, game);
     mlx_loop(game->init);
 }
