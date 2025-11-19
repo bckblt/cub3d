@@ -157,6 +157,7 @@ void render_frame(t_game *game)
 {
     for (int x = 0; x < game->info->max_x; x++)
     {
+        // ... (cast_single_ray ve çizim başlangıcı)
         t_ray ray;
         cast_single_ray(game, &ray, x);
 
@@ -164,14 +165,16 @@ void render_frame(t_game *game)
         int drawStart = -lineHeight / 2 + game->info->max_y / 2;
         int drawEnd = lineHeight / 2 + game->info->max_y / 2;
 
-        // Texture seçimi
+        // Doku Seçimi (ORİJİNAL KODUNUZ KORUNDU)
         t_texture *tex;
         if (ray.side == 1)
+            // ray.stepY > 0 ise SO (Kuzey duvarına çarpma), değilse NO (Güney duvarına çarpma)
             tex = (ray.stepY > 0) ? &game->tex_so : &game->tex_no;
         else
+            // ray.stepX > 0 ise EA (Batı duvarına çarpma), değilse WE (Doğu duvarına çarpma)
             tex = (ray.stepX > 0) ? &game->tex_ea : &game->tex_we;
 
-        // WallHit ve texX hesapla
+        // WallHit ve texX hesapla (değişmedi)
         double wallHit;
         if (ray.side == 0)
             wallHit = game->player->y + ray.perpWallDist * ray.rayDirY;
@@ -180,8 +183,16 @@ void render_frame(t_game *game)
         wallHit -= floor(wallHit);
 
         int texX = (int)(wallHit * (double)tex->width);
-        if (ray.side == 0 && ray.rayDirX > 0) texX = tex->width - texX - 1;
-        if (ray.side == 1 && ray.rayDirY < 0) texX = tex->width - texX - 1;
+        
+        // DOKU AYNALAMA DÜZELTMESİ (ORİJİNALİN TERSİ)
+        
+        // Side 0 (Dikey Duvar): Işın negatif X yönüne gidiyorsa (Doğu duvarına çarptıysa) aynala.
+        if (ray.side == 0 && ray.rayDirX < 0) 
+            texX = tex->width - texX - 1;
+            
+        // Side 1 (Yatay Duvar): Işın pozitif Y yönüne gidiyorsa (Kuzey duvarına çarptıysa) aynala.
+        if (ray.side == 1 && ray.rayDirY > 0)
+            texX = tex->width - texX - 1;
 
         draw_textured_column(game, x, drawStart, drawEnd, tex, texX);
     }

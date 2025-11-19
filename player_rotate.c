@@ -45,10 +45,9 @@ void rotate_right(t_game *game)
     double rotSpeed = 0.05;
     double oldDirX = game->player->dirx;
     double oldPlaneX = game->planeX;
-    
-    game->player->dirx = game->player->dirx * cos(rotSpeed) - game->player->diry * sin(rotSpeed);
-    game->player->diry = oldDirX * sin(rotSpeed) + game->player->diry * cos(rotSpeed);
-    
+
+    game->player->dirx = oldDirX * cos(rotSpeed) - game->player->diry * sin(rotSpeed);
+    game->player->diry = oldDirX * sin(rotSpeed) + game->player->diry * cos(rotSpeed);    
     game->planeX = game->planeX * cos(rotSpeed) - game->planeY * sin(rotSpeed);
     game->planeY = oldPlaneX * sin(rotSpeed) + game->planeY * cos(rotSpeed);
 }
