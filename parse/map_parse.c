@@ -41,6 +41,9 @@ bool	wall_check(t_map_chk *info)
 	y = 0;
 	cp_map = map_copy(info->map);
 	put_marks(cp_map, info->p_x, info->p_y);
+	int i = 0;
+	while(cp_map[i])
+		printf("%s\n", cp_map[i++]);
 	while (cp_map[x])
 	{
 		y = 0;
