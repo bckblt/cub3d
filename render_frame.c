@@ -5,24 +5,26 @@ static void draw_textured_column(t_game *game, int x, int drawStart, int drawEnd
 {
     if (!tex || !tex->addr || tex->width <= 0 || tex->height <= 0)
         return;
-    int y = 0;
-    char *dst;
+
     int screenH = game->info->max_y;
+    int lineHeight = drawEnd - drawStart + 1;
 
     // Ceiling
-    while (y < drawStart)
+    for (int y = 0; y < drawStart; y++)
     {
-        dst = game->addr + (y * game->line_length + x * (game->bits_per_pixel / 8));
+        char *dst = game->addr + (y * game->line_length + x * (game->bits_per_pixel / 8));
         *(unsigned int*)dst = (unsigned int)game->info->C_C;
-        y++;
     }
 
-    int lineHeight = drawEnd - drawStart + 1;
+    // Step ve başlangıç pozisyonunu perspektife göre ayarla
     double step = (double)tex->height / (double)lineHeight;
-    double texPos = (drawStart - screenH / 2.0 + lineHeight / 2.0) * step;
+    double texPos = 0;
+    if (drawStart < 0) // ekran üstünden taşmışsa
+        texPos = -drawStart * step;
+    if (drawStart < 0) drawStart = 0;
 
     // Wall
-    while (y <= drawEnd && y < screenH)
+    for (int y = drawStart; y <= drawEnd && y < screenH; y++)
     {
         int texY = (int)texPos;
         if (texY < 0) texY = 0;
@@ -32,17 +34,15 @@ static void draw_textured_column(t_game *game, int x, int drawStart, int drawEnd
         char *src = tex->addr + (texY * tex->line_length + texX * (tex->bpp / 8));
         unsigned int color = *(unsigned int*)src;
 
-        dst = game->addr + (y * game->line_length + x * (game->bits_per_pixel / 8));
+        char *dst = game->addr + (y * game->line_length + x * (game->bits_per_pixel / 8));
         *(unsigned int*)dst = color;
-        y++;
     }
 
     // Floor
-    while (y < screenH)
+    for (int y = drawEnd + 1; y < screenH; y++)
     {
-        dst = game->addr + (y * game->line_length + x * (game->bits_per_pixel / 8));
+        char *dst = game->addr + (y * game->line_length + x * (game->bits_per_pixel / 8));
         *(unsigned int*)dst = (unsigned int)game->info->F_C;
-        y++;
     }
 }
 
@@ -155,52 +155,36 @@ void cast_single_ray(t_game *game, t_ray *ray, int x)
 
 void render_frame(t_game *game)
 {
-    int x = 0;
-    t_ray ray;
-
-    while (x < game->info->max_x)
+    for (int x = 0; x < game->info->max_x; x++)
     {
-        // Her x kolonu için bir ışın gönder
+        t_ray ray;
         cast_single_ray(game, &ray, x);
-        
-        // Duvar yüksekliğini hesapla
+
         int lineHeight = (int)(game->info->max_y / ray.perpWallDist);
-        
-        // Çizim başlangıç ve bitiş noktaları
         int drawStart = -lineHeight / 2 + game->info->max_y / 2;
-        if (drawStart < 0)
-            drawStart = 0;
-        
         int drawEnd = lineHeight / 2 + game->info->max_y / 2;
-        if (drawEnd >= game->info->max_y)
-            drawEnd = game->info->max_y - 1;
-        
-        // Doku secimi
+
+        // Texture seçimi
         t_texture *tex;
         if (ray.side == 1)
-            tex = (ray.stepY > 0) ? &game->tex_so : &game->tex_no; // South / North
+            tex = (ray.stepY > 0) ? &game->tex_so : &game->tex_no;
         else
-            tex = (ray.stepX > 0) ? &game->tex_ea : &game->tex_we; // East / West
+            tex = (ray.stepX > 0) ? &game->tex_ea : &game->tex_we;
 
-        // Texture X hesapla
-        double wallX;
+        // WallHit ve texX hesapla
+        double wallHit;
         if (ray.side == 0)
-            wallX = game->player->y + ray.perpWallDist * ray.rayDirY;
+            wallHit = game->player->y + ray.perpWallDist * ray.rayDirY;
         else
-            wallX = game->player->x + ray.perpWallDist * ray.rayDirX;
-        wallX -= floor(wallX);
-        int texX = (int)(wallX * (double)tex->width);
-        if (ray.side == 0 && ray.rayDirX > 0)
-            texX = tex->width - texX - 1;
-        if (ray.side == 1 && ray.rayDirY < 0)
-            texX = tex->width - texX - 1;
-        // Clamp texture coordinate to valid range
-        if (texX < 0) texX = 0;
-        if (texX >= tex->width) texX = tex->width - 1;
+            wallHit = game->player->x + ray.perpWallDist * ray.rayDirX;
+        wallHit -= floor(wallHit);
 
-        // Dokusuz fonksiyon yerine dokulu cizim
+        int texX = (int)(wallHit * (double)tex->width);
+        if (ray.side == 0 && ray.rayDirX > 0) texX = tex->width - texX - 1;
+        if (ray.side == 1 && ray.rayDirY < 0) texX = tex->width - texX - 1;
+
         draw_textured_column(game, x, drawStart, drawEnd, tex, texX);
-        x++;
     }
+
     mlx_put_image_to_window(game->init, game->win, game->img, 0, 0);
 }

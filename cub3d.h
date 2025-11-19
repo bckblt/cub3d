@@ -71,6 +71,16 @@ typedef struct s_texture
     int   endian;
 }   t_texture;
 
+typedef struct s_keys
+{
+    int w;
+    int a;
+    int s;
+    int d;
+    int left;
+    int right;
+}   t_keys;
+
 typedef struct s_game
 {
     void *mlx;
@@ -90,9 +100,8 @@ typedef struct s_game
     t_texture tex_so;
     t_texture tex_we;
     t_texture tex_ea;
-
+    t_keys *keys;
 }   t_game ;
-
 
 t_map_chk    *parse(char *file);
 bool check_file_name(char *file);

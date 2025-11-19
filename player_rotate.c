@@ -2,7 +2,7 @@
 
 void move_forward(t_game *game)
 {
-    double moveSpeed = 0.3;
+    double moveSpeed = 0.13;
     double newX = game->player->x + game->player->dirx * moveSpeed;
     double newY = game->player->y + game->player->diry * moveSpeed;
     
@@ -15,7 +15,7 @@ void move_forward(t_game *game)
 
 void move_backward(t_game *game)
 {
-    double moveSpeed = 0.3;
+    double moveSpeed = 0.1;
     double newX = game->player->x - game->player->dirx * moveSpeed;
     double newY = game->player->y - game->player->diry * moveSpeed;
     
@@ -27,7 +27,7 @@ void move_backward(t_game *game)
 
 void rotate_left(t_game *game)
 {
-    double rotSpeed = 0.1;
+    double rotSpeed = 0.05;
     double oldDirX = game->player->dirx;
     double oldPlaneX = game->planeX;
     
@@ -42,7 +42,7 @@ void rotate_left(t_game *game)
 
 void rotate_right(t_game *game)
 {
-    double rotSpeed = 0.1;
+    double rotSpeed = 0.05;
     double oldDirX = game->player->dirx;
     double oldPlaneX = game->planeX;
     
@@ -55,7 +55,7 @@ void rotate_right(t_game *game)
 
 void strafe_left(t_game *game)
 {
-    double moveSpeed = 0.1;
+    double moveSpeed = 0.05;
     double newX = game->player->x - game->planeX * moveSpeed;
     double newY = game->player->y - game->planeY * moveSpeed;
     
@@ -67,7 +67,7 @@ void strafe_left(t_game *game)
 
 void strafe_right(t_game *game)
 {
-    double moveSpeed = 0.1;
+    double moveSpeed = 0.05;
     double newX = game->player->x + game->planeX * moveSpeed;
     double newY = game->player->y + game->planeY * moveSpeed;
     

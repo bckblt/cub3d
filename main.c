@@ -1,4 +1,5 @@
 #include "cub3d.h"
+#include <stdio.h>
 
 int main(int ac, char **av)
 {
