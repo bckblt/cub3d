@@ -1,34 +1,35 @@
 #include "cub3d.h"
 
-static	void	put_marks(char **cp_map, int x, int y)
+static void put_marks(char **cp_map, int x, int y)
 {
-	cp_map[y][x] = '*';
-	if (cp_map[y - 1][x] && cp_map[y - 1][x] != '1' && cp_map[y - 1][x] != '*')
-		put_marks(cp_map, x, y - 1);
-	if (cp_map[y + 1][x] && cp_map[y + 1][x] != '1' && cp_map[y + 1][x] != '*')
-		put_marks(cp_map, x, y + 1);
-	if (cp_map[y][x - 1] && cp_map[y][x - 1] != '1' && cp_map[y][x - 1] != '*')
-		put_marks(cp_map, x - 1, y);
-	if (cp_map[y][x + 1] && cp_map[y][x + 1] != '1' && cp_map[y][x + 1] != '*')
-		put_marks(cp_map, x + 1, y);
+    cp_map[y][x] = '*';
+
+    if (y > 0 && cp_map[y - 1][x] && cp_map[y - 1][x] != '1' && cp_map[y - 1][x] != '*')
+        put_marks(cp_map, x, y - 1);
+    if (cp_map[y + 1] && cp_map[y + 1][x] && cp_map[y + 1][x] != '1' && cp_map[y + 1][x] != '*')
+        put_marks(cp_map, x, y + 1);
+    if (x > 0 && cp_map[y][x - 1] && cp_map[y][x - 1] != '1' && cp_map[y][x - 1] != '*')
+        put_marks(cp_map, x - 1, y);
+    if (cp_map[y][x + 1] && cp_map[y][x + 1] != '1' && cp_map[y][x + 1] != '*')
+        put_marks(cp_map, x + 1, y);
 }
 
-bool 	space_chk(int x, int y, char **cp_map)
+bool space_chk(int x, int y, char **cp_map)
 {
-	if(cp_map[x][y] == '*')
-	{
-		if(cp_map[x + 1][y] != '1' && cp_map[x + 1][y] != '*')
-			return(false);
-		if(cp_map[x - 1][y] != '1' && cp_map[x - 1][y] != '*')
-			return(false);
-		if(cp_map[x][y + 1] != '1' && cp_map[x][y + 1] != '*')
-			return(false);
-		if(cp_map[x][y - 1] != '1' && cp_map[x][y - 1] != '*')
-			return(false);
-	}
-	else
-		return(true);
-	return(true);
+    if (cp_map[x][y] == '*')
+    {
+        if (x == 0 || y == 0 || cp_map[x + 1] == NULL || cp_map[x][y + 1] == '\0')
+            return (false);
+        if (cp_map[x + 1][y] != '1' && cp_map[x + 1][y] != '*')
+            return (false);
+        if (cp_map[x - 1][y] != '1' && cp_map[x - 1][y] != '*')
+            return (false);
+        if (cp_map[x][y + 1] != '1' && cp_map[x][y + 1] != '*')
+            return (false);
+        if (cp_map[x][y - 1] != '1' && cp_map[x][y - 1] != '*')
+            return (false);
+    }
+    return (true);
 }
 
 bool	wall_check(t_map_chk *info)
@@ -41,9 +42,6 @@ bool	wall_check(t_map_chk *info)
 	y = 0;
 	cp_map = map_copy(info->map);
 	put_marks(cp_map, info->p_x, info->p_y);
-	int i = 0;
-	while(cp_map[i])
-		printf("%s\n", cp_map[i++]);
 	while (cp_map[x])
 	{
 		y = 0;
@@ -51,6 +49,7 @@ bool	wall_check(t_map_chk *info)
 		{
 			if(!space_chk(x, y, cp_map))
 			{
+				free_dp(cp_map);
 				printf("Error : Invalid map\n");
 				return(false);
 			}
@@ -58,6 +57,7 @@ bool	wall_check(t_map_chk *info)
 				&& cp_map[x][y] != '\n' && cp_map[x][y] != '\0'
 				&& cp_map[x][y] != '0' && cp_map[x][y] != ' ')
 			{
+				free_dp(cp_map);
 				printf("Error : Invalid map\n");
 				return(false);
 			}
@@ -65,6 +65,7 @@ bool	wall_check(t_map_chk *info)
 		}
 		x++;
 	}
+	free_dp(cp_map);
 	return(true);
 }
 

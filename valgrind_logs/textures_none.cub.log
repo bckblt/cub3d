@@ -1,0 +1,15 @@
+==1900243== Memcheck, a memory error detector
+==1900243== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==1900243== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==1900243== Command: ./cub3d maps/bad/textures_none.cub
+==1900243== Parent PID: 1899833
+==1900243== 
+==1900243== 
+==1900243== HEAP SUMMARY:
+==1900243==     in use at exit: 0 bytes in 0 blocks
+==1900243==   total heap usage: 111 allocs, 111 frees, 6,864 bytes allocated
+==1900243== 
+==1900243== All heap blocks were freed -- no leaks are possible
+==1900243== 
+==1900243== For lists of detected and suppressed errors, rerun with: -s
+==1900243== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

@@ -40,46 +40,36 @@ bool	same_direc(t_map_chk *info)
 	return(true);
 }
 
-bool	path_chk(t_map_chk *info)
+bool	check_file(char *file_name, char *to_find)
 {
 	char *tmp;
-	
-	tmp = ft_strtrim(info->NT, "NO \n");
+
+	tmp = ft_strtrim(file_name, to_find);
 	if(!is_valid_file(tmp))
 	{
 		free(tmp);
-		printf("Error : NO textures not found\n");
+		printf("textures not found\n");
 		return(false);
 	}
 	free(tmp);
-	tmp = ft_strtrim(info->ST, "SO \n");
-	if(!is_valid_file(tmp))
-	{
-		free(tmp);
-		printf("Error : SO textures not found\n");
+	return(true);
+}
+
+bool	file_path_chk(t_map_chk *info)
+{	
+	if(check_file(info->NT, "NO \n") == 0)
 		return(false);
-	}
-	free(tmp);
-	tmp = ft_strtrim(info->WT, "WE \n");
-	if(!is_valid_file(tmp))
-	{
-		free(tmp);
-		printf("Error : WE textures not found\n");
+	if(check_file(info->ST, "SO \n") == 0)
 		return(false);
-	}
-	free(tmp);
-	tmp = ft_strtrim(info->ET, "EA \n");
-	if(!is_valid_file(tmp))
-	{
-		free(tmp);
-		printf("Error : EA textures not found\n");
+	if(check_file(info->WT, "WE \n") == 0)
 		return(false);
-	}
+	if(check_file(info->ET, "EA \n") == 0)
+		return(false);
+
 	info->NT = ft_strtrim(info->NT, "NO \n");
 	info->ET = ft_strtrim(info->ET, "EA \n");
 	info->WT = ft_strtrim(info->WT, "WE \n");
 	info->ST = ft_strtrim(info->ST, "SO \n");
-	free(tmp);
 	return(true);
 }
 
@@ -98,35 +88,43 @@ int	get_rgb(char **str_rgb)
 	return(color);
 }
 
-bool	colour_format(t_map_chk *info)
+bool	valid_color(t_map_chk *info, char *color, char *to_find, char key)
 {
 	char *tmp;
 	char **tmp2;
+	int i = 0;
 
-	tmp = ft_strtrim(info->F, "F \n");
+	tmp = ft_strtrim(color, to_find);
 	tmp2 = ft_split(tmp, ',');
-	if(tmp2[3] || !rgb_chk(tmp2) || !comma_chk(tmp) || !tmp2[2])
+	while (tmp2[i])
+		i++;
+	if(i >= 4 || !rgb_chk(tmp2) || !comma_chk(tmp) || !tmp2[2])
 	{
 		free(tmp);
 		free_dp(tmp2);
-		printf("Colour format must be RGB\n");
 		return(false);
 	}
+	if(key == 'F')
 	info->F_C = get_rgb(tmp2);
+	if(key == 'C')
+	info->C_C = get_rgb(tmp2);
+	free_dp(tmp2);
 	free(tmp);
-	//free_dp(tmp2);
-	tmp = ft_strtrim(info->C, "C \n");
-	tmp2 = ft_split(tmp, ',');
-	if(tmp2[3] || !rgb_chk(tmp2) || !comma_chk(tmp) || !tmp2[2])
+	return(true);
+}
+
+bool	colour_format(t_map_chk *info)
+{
+	if(!valid_color(info, info->F, "F \n", 'F'))
 	{
-		free(tmp);
-		free_dp(tmp2);
 		printf("Colour format must be RGB\n");
 		return(false);
 	}
-	info->C_C = get_rgb(tmp2);
-	free(tmp2);
-	//free_dp(tmp2);
+	if(!valid_color(info, info->C, "C \n", 'C'))
+	{
+		printf("Colour format must be RGB\n");
+		return(false);
+	}
 	return(true);
 }
 
@@ -136,6 +134,7 @@ t_map_chk    *parse(char *file)
 	info = malloc(sizeof(t_map_chk));
 	if(!check_file_name(file))
 	{
+		free(info);
 		printf("File format must be \".cub\"\n");
 		return NULL;
 	}
@@ -147,11 +146,16 @@ t_map_chk    *parse(char *file)
 	info = get_file(file, info);
 	if(!get_textures_and_map(info) || !same_direc(info))
 	{
+		free_dp(info->full_file);
+		free(info);
 		printf("Each element can only be defined once\n");
 		return NULL;
 	}
 	if(info->map[0] == NULL)
 	{
+		free_dp(info->full_file);
+		free_dp(info->map);
+		free(info);
 		printf("Map not found\n");
 		return NULL;
 	}
@@ -160,7 +164,23 @@ t_map_chk    *parse(char *file)
 		printf("Wrong file format\n");
 		return NULL;
 	}
-	if(!path_chk(info) || !colour_format(info) || !map_parse(info))
+	if(!file_path_chk(info))
+	{
+		free_dp(info->full_file);
+		free_dp(info->map);
+		free(info);
 		return NULL;
+	}
+	if(!colour_format(info) || !map_parse(info))
+	{
+		free_dp(info->full_file);
+		free_dp(info->map);
+		free(info->ET);
+		free(info->WT);
+		free(info->ST);
+		free(info->NT);
+		free(info);
+		return NULL;
+	}
 	return (info);
 }

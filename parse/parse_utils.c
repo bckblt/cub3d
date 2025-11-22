@@ -43,10 +43,14 @@ bool	rgb_chk(char **colour)
 
 bool	is_valid_file(char *file)
 {
-	if(access(file, F_OK) == 0)
-		return (true);
-	else
+	int fd;
+
+	fd = open(file, O_RDONLY);
+	if(fd == -1)
 		return(false);
+	else
+		return(true);
+	close(fd);
 }
 
 bool check_file_name(char *file)

@@ -5,15 +5,24 @@ t_map_chk	*get_file(char *file, t_map_chk *info)
 	char *line;
 	int len = 0;
 	int fd = open(file, O_RDONLY);
-	while((line = get_next_line(fd)))
+
+	line = get_next_line(fd);
+	while(line)
+	{
 		len++;
+		free(line);
+		line = get_next_line(fd);
+	}
 	info->full_file = malloc(sizeof(char *) * (len + 1));
 	len = 0;
 	fd = open(file, O_RDONLY);
-	while((line = get_next_line(fd)))
+
+	line = get_next_line(fd);
+	while(line)
 	{
 		info->full_file[len] = line;
 		len++;
+		line = get_next_line(fd);
 	}
 	info->full_file[len] = NULL;
 	return(info);
