@@ -9,28 +9,48 @@ int exit_game(void *param)
 
     if (!game)
         exit(0);
-    if (game->img && game->init)
+
+    if (game->init)
     {
-        mlx_destroy_image(game->init, game->img);
-        game->img = NULL;
-        game->addr = NULL;
-    }
-    if (game->win && game->init)
-    {
-        mlx_destroy_window(game->init, game->win);
-        game->win = NULL;
+        if (game->tex_no.img) 
+			mlx_destroy_image(game->init, game->tex_no.img);
+        if (game->tex_so.img) 
+			mlx_destroy_image(game->init, game->tex_so.img);
+        if (game->tex_we.img) 
+			mlx_destroy_image(game->init, game->tex_we.img);
+        if (game->tex_ea.img) 
+			mlx_destroy_image(game->init, game->tex_ea.img);
+        if (game->img) 
+			mlx_destroy_image(game->init, game->img);
+        if (game->win) 
+			mlx_destroy_window(game->init, game->win);
+        mlx_destroy_display(game->init);
+        free(game->init);
     }
     if (game->player)
-    {
         free(game->player);
-        game->player = NULL;
-    }
     if (game->keys)
-    {
         free(game->keys);
-        game->keys = NULL;
+    if (game->info)
+    {
+        if (game->info->map)
+            free_dp(game->info->map);
+        if (game->info->full_file)
+            free_dp(game->info->full_file);
+        if (game->info->NT) 
+			free(game->info->NT);
+        if (game->info->ST) 
+			free(game->info->ST);
+        if (game->info->WT) 
+			free(game->info->WT);
+        if (game->info->ET) 
+			free(game->info->ET);
+    
+        free(game->info);
     }
+    free(game);
     exit(0);
+    return (0);
 }
 
 int game_loop(void *param)
@@ -48,7 +68,6 @@ int game_loop(void *param)
             strafe_left(g);
         if (g->keys->d)
             strafe_right(g);
-
         if (g->keys->left)
             rotate_left(g);
         if (g->keys->right)
@@ -109,6 +128,7 @@ int key_release(int key, void *param)
 
 void game_engine(t_game *game, t_map_chk *info)
 {
+	game->info = info;
     if (!game || !info)
     {
         fprintf(stderr, "Error: NULL game or info passed to game_engine\n");
