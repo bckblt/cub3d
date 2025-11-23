@@ -47,7 +47,7 @@ static char	*get_line(char *str)
 		return (NULL);
 	while (str[i] && str[i] != '\n')
 		i++;
-	if(str[i] == '\n')
+	if (str[i] == '\n')
 		line = malloc(sizeof(char) * (i + 2));
 	else
 		line = malloc(sizeof(char) * (i + 1));
@@ -99,8 +99,8 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	str = read_file(fd, str);
-	if(!str)
-		return(NULL);
+	if (!str)
+		return (NULL);
 	line = get_line(str);
 	str = update_line(str);
 	return (line);

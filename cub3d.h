@@ -128,6 +128,12 @@ void load_textures(t_game *game);
 void init_player(t_game *game);
 void render_frame(t_game *game);
 bool	find_elements(char *key, char *line, char a);
+bool	player_chk(t_map_chk *info);
+bool	move_chk(t_map_chk *info);
+bool	range_chk(char **colour);
+bool	colour_format(t_map_chk *info);
+bool	check_file(char *file_name, char *to_find);
+void 	err_frees(t_map_chk *info, int key);
 
 
 

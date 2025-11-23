@@ -4,7 +4,8 @@ DEBUG_FLAGS = -g
 
 NAME = cub3d
 
-SRC = main.c engine.c parse/parse.c gnl/get_next_line_utils.c gnl/get_next_line.c parse/parse_utils.c parse/map_parse.c parse/read_file.c init_player.c player_rotate.c load_textures.c render_frame.c
+SRC = main.c engine.c parse/parse.c gnl/get_next_line_utils.c gnl/get_next_line.c parse/parse_utils.c parse/map_parse.c parse/read_file.c init_player.c player_rotate.c load_textures.c \
+	render_frame.c parse/player_parse.c parse/parse_utils2.c parse/rgb_parse.c parse/frees.c
 OBJ = $(SRC:.c=.o)
 
 # Libft ayarları

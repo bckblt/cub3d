@@ -5,6 +5,7 @@ int main(int ac, char **av)
 {
     t_map_chk *info;
     t_game *game;
+
     if(ac != 2)
     {
         printf("Please use this format : ./cub3D map.cub\n");
