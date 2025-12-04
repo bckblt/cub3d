@@ -196,6 +196,6 @@ void render_frame(t_game *game)
 
         draw_textured_column(game, x, drawStart, drawEnd, tex, texX);
     }
-
+    render_minimap(game);
     mlx_put_image_to_window(game->init, game->win, game->img, 0, 0);
 }

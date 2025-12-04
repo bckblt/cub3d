@@ -134,7 +134,7 @@ bool	range_chk(char **colour);
 bool	colour_format(t_map_chk *info);
 bool	check_file(char *file_name, char *to_find);
 void 	err_frees(t_map_chk *info, int key);
-
+void render_minimap(t_game *game);
 
 
 
