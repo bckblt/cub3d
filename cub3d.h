@@ -1,0 +1,152 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hadalici <hadalici@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/21 20:10:45 by bakarabu          #+#    #+#             */
+/*   Updated: 2025/12/23 14:39:56 by hadalici         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef CUB3D_H
+# define CUB3D_H
+
+# include "./gnl/get_next_line.h"
+# include "./libft/libft.h"
+# include "minilibx-linux/mlx.h"
+# include <fcntl.h>
+# include <math.h>
+# include <stdbool.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <unistd.h>
+
+typedef struct s_map_chk
+{
+	char	**full_file;
+	char	**map;
+	char	*nt;
+	char	*st;
+	char	*wt;
+	char	*et;
+	char	*f;
+	char	*c;
+	int		map_start;
+	int		f_c;
+	int		c_c;
+	int		p_x;
+	int		p_y;
+	int		max_x;
+	int		max_y;
+}			t_map_chk;
+
+typedef struct s_ray
+{
+	double	raydirx;
+	double	raydiry;
+	double	sidedistx;
+	double	sidedisty;
+	double	deltadistx;
+	double	deltadisty;
+	double	perpwalldist;
+	int		mapx;
+	int		mapy;
+	int		stepx;
+	int		stepy;
+	int		hit;
+	int		side;
+}			t_ray;
+
+typedef struct s_player
+{
+	double	x;
+	double	y;
+	double	dirx;
+	double	diry;
+}			t_player;
+
+typedef struct s_texture
+{
+	void	*img;
+	char	*addr;
+	int		width;
+	int		height;
+	int		bpp;
+	int		line_length;
+	int		endian;
+}			t_texture;
+
+typedef struct s_keys
+{
+	int	w;
+	int	a;
+	int	s;
+	int	d;
+	int	left;
+	int	right;
+}		t_keys;
+
+typedef struct s_game
+{
+	void		*mlx;
+	void		*win;
+	void		*init;
+	void		*img;
+	void		*addr;
+	int			bits_per_pixel;
+	int			line_length;
+	int			endian;
+	int			line_h;
+	double		planex;
+	double		planey;
+	t_player	*player;
+	t_map_chk	*info;
+	t_texture	tex_no;
+	t_texture	tex_so;
+	t_texture	tex_we;
+	t_texture	tex_ea;
+	t_keys		*keys;
+}				t_game;
+
+t_map_chk		*parse(char *file);
+bool			check_file_name(char *file);
+bool			is_valid_file(char *file);
+void			game_engine(t_game *game, t_map_chk *info);
+bool			check_file_name(char *file);
+bool			is_valid_file(char *file);
+t_map_chk		*get_file(char *file, t_map_chk *info);
+void			get_map(t_map_chk *info, int i);
+bool			get_textures_and_map(t_map_chk *info);
+void			free_dp(char **str);
+bool			rgb_chk(char **colour);
+bool			comma_chk(char *str);
+bool			map_parse(t_map_chk *info);
+bool			is_valid_char(char a);
+char			**map_copy(char **map);
+void			strafe_right(t_game *game);
+void			strafe_left(t_game *game);
+void			rotate_right(t_game *game);
+void			rotate_left(t_game *game);
+void			move_backward(t_game *game);
+void			move_forward(t_game *game);
+void			load_textures(t_game *game);
+void			init_player(t_game *game);
+void			render_frame(t_game *game, int x);
+bool			find_elements(char *key, char *line, char a);
+bool			player_chk(t_map_chk *info);
+bool			move_chk(t_map_chk *info);
+bool			range_chk(char **colour);
+bool			colour_format(t_map_chk *info);
+bool			check_file(char *file_name, char *to_find);
+void			err_frees(t_map_chk *info, int key);
+void			render_minimap(t_game *game);
+int				exit_game(void *param);
+int				is_wall(double x, double y, t_game *game);
+void			draw_textured_column(t_game *game, int x, t_texture *tex,
+					int texX);
+void			perform_dda(t_ray *ray, t_map_chk *info);
+
+#endif
